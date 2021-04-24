@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'login_screen.dart';
+import 'profile_screen.dart';
+import 'users_screens.dart';
+import 'package:training_application/widget/custom_button.dart';
 
 const kTextColor = Color(0xFF3C3A36);
 const kBottomAppBarColor = Color(0xFFBEBAB3);
@@ -16,24 +19,62 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final _settingsFormKey = GlobalKey<FormState>();
 
+  int selectedIndex = 2;
+
+  void _onItemtap(int index) {
+    setState(() {
+      this.selectedIndex = index;
+      if (this.selectedIndex == 1) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ProfileScreen()));
+      }
+
+      if (this.selectedIndex == 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => UsersScreen()));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Align(
-          child: Text(
-            "Settings",
-            style: TextStyle(
-              fontFamily: 'Rubik',
-              fontSize: 24.0,
-              fontWeight: FontWeight.w500,
-              color: kTextColor,
-            ),
+        title: Text(
+          "Settings",
+          style: TextStyle(
+            fontFamily: 'Rubik',
+            fontSize: 24.0,
+            fontWeight: FontWeight.w500,
+            color: kTextColor,
           ),
-          alignment: Alignment.center,
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
         elevation: 0.0,
+        leading: Row(
+          children: [
+            SizedBox(width: 16.0),
+            CustomButton(
+                icon: Icons.arrow_back_ios_rounded, onButtonTap: () {}),
+          ],
+        ),
+        actions: [
+          Row(
+            children: [
+              CustomButton(
+                iconSize: 20.0,
+                icon: Icons.delete,
+                onButtonTap: () {},
+              ),
+              SizedBox(width: 16.0),
+            ],
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -45,12 +86,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Expanded(
             child: Hero(
                 tag: 'profileImage',
-                child: Container(
-                  child: Image.asset(
-                    'images/Cool Kids Bust 2.png',
-                  ),
+                child: Image.asset(
+                  'images/Cool Kids Bust 2.png',
                 )),
-            flex: 1,
           ),
           Expanded(
             child: Form(
@@ -169,7 +207,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             topLeft: Radius.circular(16),
           ),
           child: BottomNavigationBar(
-            currentIndex: 2,
+            onTap: _onItemtap,
+            currentIndex: this.selectedIndex,
             items: [
               BottomNavigationBarItem(
                 icon: SvgPicture.asset('images/Icon.svg'),

@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                       onPressed: () {
                         if (_loginFormKey.currentState.validate()) {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
