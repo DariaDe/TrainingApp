@@ -98,15 +98,12 @@ class _UsersScreenState extends State<UsersScreen> {
                     },
                   ));
             },
-            child: Hero(
-              tag: 'userCard${index}',
-              child: Container(
-                child: UserTile(users: currentUsers, userIndex: index),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1.0, color: Color(0xFFBEBAB3)),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(12.0),
-                  ),
+            child: Container(
+              child: UserTile(user: currentUsers[index]),
+              decoration: BoxDecoration(
+                border: Border.all(width: 1.0, color: Color(0xFFBEBAB3)),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(12.0),
                 ),
               ),
             ),

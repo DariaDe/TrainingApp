@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'settings_screen.dart';
 import 'users_screens.dart';
+import 'login_screen.dart';
 import 'package:training_application/widget/custom_button.dart';
 
 const kTextColor = Color(0xFF3C3A36);
@@ -57,7 +58,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               CustomButton(
                 icon: Icons.arrow_back_ios_rounded,
-                onButtonTap: () {},
+                onButtonTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => LoginScreen()));
+                },
               )
             ],
           )),

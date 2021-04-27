@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:training_application/models/user.dart';
 
 class UserTile extends StatelessWidget {
-  final List<User> users;
+  final User user;
   final int userIndex;
 
-  const UserTile({Key key, this.users, this.userIndex}) : super(key: key);
+  const UserTile({Key key, this.user, this.userIndex}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -42,9 +42,7 @@ class UserTile extends StatelessWidget {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    users[userIndex].first_name +
-                        ' ' +
-                        users[userIndex].last_name,
+                    user.first_name + ' ' + user.last_name,
                     style: TextStyle(
                       fontSize: 24.0,
                       fontFamily: 'Rubik',
