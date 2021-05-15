@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:training_application/screens/profile_screen.dart';
+import 'package:training_application/state/inherited_application_state.dart';
+import 'landing_screen.dart';
+import 'package:training_application/state/inherited_application_state.dart';
 
 const kBorderFormColor = Color(0xFFBEBAB3);
 const kTextColor = Color(0xFF3C3A36);
@@ -133,11 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                         onPressed: () {
                           if (_loginFormKey.currentState.validate()) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        ProfileScreen()));
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (BuildContext context) {
+                              return InheritedAplicationState(
+                                  child: LandingScreen());
+                            }));
                           }
                         },
                         child: Text(

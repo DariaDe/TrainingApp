@@ -110,45 +110,6 @@ class _UsersScreenState extends State<UsersScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: kBottomAppBarColor,
-            width: 1.0,
-          ),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(16),
-            topLeft: Radius.circular(16),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(16),
-            topLeft: Radius.circular(16),
-          ),
-          child: BottomNavigationBar(
-            onTap: _onItemtap,
-            currentIndex: this.selectedIndex,
-            items: [
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset('images/Icon.svg'),
-                title: Text(
-                  'Users',
-                  style: TextStyle(),
-                ),
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset('images/Profile Icon.svg'),
-                title: Text('Profile'),
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset('images/Frame 4.svg'),
-                title: Text('Settings'),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

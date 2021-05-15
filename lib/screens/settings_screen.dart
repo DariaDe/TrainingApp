@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'login_screen.dart';
-import 'profile_screen.dart';
-import 'users_screens.dart';
 import 'package:training_application/widget/custom_button.dart';
+import 'package:training_application/state/inherited_application_state.dart';
 
 const kTextColor = Color(0xFF3C3A36);
 const kBottomAppBarColor = Color(0xFFBEBAB3);
@@ -18,27 +16,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _settingsFormKey = GlobalKey<FormState>();
-
-  int selectedIndex = 2;
-
-  void _onItemtap(int index) {
-    setState(() {
-      this.selectedIndex = index;
-      if (this.selectedIndex == 1) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => ProfileScreen()));
-      }
-
-      if (this.selectedIndex == 0) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => UsersScreen()));
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             CustomButton(
                 icon: Icons.arrow_back_ios_rounded,
                 onButtonTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => LoginScreen()));
+                  InheritedAplicationState.of(context).goBack();
                 }),
           ],
         ),
@@ -97,11 +71,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               height: 28.0,
             ),
             Center(
-              child: Hero(
-                  tag: 'profileImage',
-                  child: Image.asset(
-                    'images/Cool Kids Bust 2.png',
-                  )),
+              child: Image.asset(
+                'images/Cool Kids Bust 2.png',
+              ),
             ),
             Center(
               child: Form(
@@ -202,45 +174,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: kBottomAppBarColor,
-            width: 1.0,
-          ),
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(16),
-            topLeft: Radius.circular(16),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(16),
-            topLeft: Radius.circular(16),
-          ),
-          child: BottomNavigationBar(
-            onTap: _onItemtap,
-            currentIndex: this.selectedIndex,
-            items: [
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset('images/Icon.svg'),
-                title: Text(
-                  'Users',
-                  style: TextStyle(),
-                ),
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset('images/Profile Icon.svg'),
-                title: Text('Profile'),
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset('images/Frame 4.svg'),
-                title: Text('Settings'),
-              ),
-            ],
-          ),
         ),
       ),
     );
