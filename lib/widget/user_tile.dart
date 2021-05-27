@@ -16,7 +16,9 @@ class UserTile extends StatelessWidget {
           width: 343.0,
           height: 194.0,
           decoration: BoxDecoration(
-              color: Color(0xFFF8F2EE),
+              color: user.userColor.color != null
+                  ? user.userColor.color
+                  : Color(0xFFF8F2EE),
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(12.0),
                 topLeft: Radius.circular(12.0),
@@ -32,7 +34,9 @@ class UserTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '3 h 30 min ',
+                    user.userColor.year != null
+                        ? '${user.userColor.year}'
+                        : '3 h 30 min ',
                     style: TextStyle(
                       fontSize: 12.0,
                       fontFamily: 'Rubik',
@@ -52,7 +56,9 @@ class UserTile extends StatelessWidget {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    'User Color',
+                    user.userColor.name != null
+                        ? user.userColor.name
+                        : 'User Color',
                     style: TextStyle(
                       fontSize: 14.0,
                       fontFamily: 'Rubik',
@@ -67,7 +73,10 @@ class UserTile extends StatelessWidget {
               right: 29.0,
               bottom: 65.0,
               child: CircleAvatar(
-                backgroundImage: AssetImage('images/profile_example.png'),
+                backgroundColor: Color(0xFFF8F2EE),
+                backgroundImage: user.avatar != null
+                    ? NetworkImage(user.avatar)
+                    : AssetImage('images/profile_example.png'),
                 radius: 37.5,
               ),
             ),

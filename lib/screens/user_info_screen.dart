@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:training_application/models/user.dart';
 import 'package:training_application/widget/custom_button.dart';
 
 const kTextColor = Color(0xFF3C3A36);
@@ -6,9 +7,9 @@ const kBottomAppBarColor = Color(0xFFBEBAB3);
 const kBtnColor = Color(0xFF3789AC);
 
 class UserInfoScreen extends StatefulWidget {
-  final int cardIndex;
+  final User user;
 
-  const UserInfoScreen({Key key, this.cardIndex}) : super(key: key);
+  const UserInfoScreen({Key key, this.user}) : super(key: key);
   @override
   _UserInfoScreenState createState() => _UserInfoScreenState();
 }
@@ -21,7 +22,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
       child: Scaffold(
         appBar: AppBar(
             title: Text(
-              "Mr.Smith",
+              "${widget.user.first_name} ${widget.user.last_name}",
               style: TextStyle(
                 fontFamily: 'Rubik',
                 fontSize: 24.0,

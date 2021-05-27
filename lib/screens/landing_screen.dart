@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:training_application/state/application_state.dart';
 import 'settings_screen.dart';
-import 'users_screens.dart';
+import 'users_screen.dart';
 import 'profile_screen.dart';
 import 'package:training_application/state/inherited_application_state.dart';
+import 'users_screen.dart';
 
 const kTextColor = Color(0xFF3C3A36);
 const kBottomAppBarColor = Color(0xFFBEBAB3);
@@ -29,7 +30,7 @@ class _LandingScreenState extends State<LandingScreen> {
         },
         controller: InheritedAplicationState.of(context).controller,
         children: [
-          UsersScreen(),
+          InheritedAplicationState(child: UsersScreen()),
           ProfileScreen(),
           SettingsScreen(),
         ],

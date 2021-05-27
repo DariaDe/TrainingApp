@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:training_application/state/inherited_application_state.dart';
 import 'screens/splash_screen.dart';
-import 'screens/landing_screen.dart';
+import 'package:training_application/screens/landing_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Training App',
-      home: SplashScreen(),
+      home: InheritedAplicationState(child: LandingScreen()),
     );
   }
 }
