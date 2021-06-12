@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:training_application/models/user.dart';
+import 'package:training_application/models/user_color.dart';
 import 'login_screen.dart';
 import 'package:training_application/widget/custom_button.dart';
 import 'package:training_application/state/inherited_application_state.dart';
@@ -16,6 +18,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _settingsFormKey = GlobalKey<FormState>();
+  String fullName;
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +109,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
                       child: TextFormField(
+                        controller: TextEditingController(text: fullName),
+                        onChanged: (value) {
+                          fullName = value;
+                        },
                         decoration: InputDecoration(
                           hintText: 'Your User Name',
                           errorStyle: TextStyle(color: Colors.redAccent),
@@ -117,6 +124,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Поле не должно быть пустым!';
+                          }
+                          if (!value.contains(" ")) {
+                            return 'В поле должны быть указаны имя и фамилия через пробел!';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     SizedBox(
@@ -136,7 +152,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                               // background
                               ),
-                          onPressed: () {},
+                          onPressed: () {
+                            if (_settingsFormKey.currentState.validate()) {
+                              setState(() {
+                                List<String> name = fullName.split(' ');
+                                var user = User(
+                                    first_name: name[0],
+                                    last_name: name[1],
+                                    id: 0,
+                                    avatar:
+                                        "https://prikolist.club/wp-content/uploads/2019/07/samaya_krasivaya_devushka_na_svete_28_21152809-768x1075.jpg",
+                                    email: "angelina@gmail.com",
+                                    userColor: UserColor(
+                                        id: 111,
+                                        name: "Teal",
+                                        year: 2020,
+                                        color: Color(0xFF008080)));
+                                InheritedAplicationState.of(context)
+                                    .updateCurrentUserNames(user);
+                              });
+                            }
+                          },
                           child: Text(
                             'Edit user name',
                             style: TextStyle(

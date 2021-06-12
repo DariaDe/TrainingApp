@@ -30,7 +30,7 @@ class _LandingScreenState extends State<LandingScreen> {
         },
         controller: InheritedAplicationState.of(context).controller,
         children: [
-          InheritedAplicationState(child: UsersScreen()),
+          UsersScreen(),
           ProfileScreen(),
           SettingsScreen(),
         ],

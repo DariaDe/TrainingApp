@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     print('Im on Splash');
+    print(kTextColor.value.toRadixString(16));
     Timer(Duration(seconds: 2), () {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));

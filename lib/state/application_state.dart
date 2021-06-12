@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:training_application/data/api.dart';
 import 'package:training_application/models/user.dart';
 import 'package:training_application/models/user_color.dart';
-import 'package:string_to_hex/string_to_hex.dart';
+import 'package:training_application/data/db.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ApplicationState {
   ValueNotifier pageNotifier = ValueNotifier<int>(1);
@@ -13,6 +14,9 @@ class ApplicationState {
   );
   int previousPageIndex;
   Api api = Api();
+  DB db = DB();
+
+  User currentUser = User();
 
   void goToPage(int pageIndex) {
     controller.animateToPage(pageIndex,
@@ -56,9 +60,40 @@ class ApplicationState {
       }
     }
 
-    print(users);
+    for (var i = 0; i < users.length; i++) {
+      var database = await db.database;
+      await db.insertUser(users[i]);
+    }
+
+    var existingCurrentUser = await db.getCurrentUser();
+    print('Existing user ${existingCurrentUser}');
+    if (existingCurrentUser != null) {
+      currentUser.first_name = existingCurrentUser[0]['first_name'];
+      currentUser.last_name = existingCurrentUser[0]['last_name'];
+    }
 
     return users;
+  }
+
+  void updateCurrentUserNames(User user) async {
+    currentUser = user;
+    var database = await db.database;
+
+    if (currentUser.first_name == null && currentUser.last_name == null) {
+      var res = await db.insertUser(currentUser);
+    } else {
+      currentUser.first_name = user.first_name;
+      currentUser.last_name = user.last_name;
+      currentUser.id = user.id;
+      currentUser.email = user.email;
+      currentUser.avatar = user.avatar;
+      currentUser.userColor = user.userColor;
+
+      await db.insertUser(currentUser);
+    }
+
+    print("Current User: ${await db.getCurrentUser()}");
+    print("Name ${currentUser.first_name}");
   }
 
   Future getPagesCount() async {

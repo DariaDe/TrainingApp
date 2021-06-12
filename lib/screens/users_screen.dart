@@ -117,8 +117,44 @@ class _UsersScreenState extends State<UsersScreen> {
               print(snapshot.connectionState);
               return Column(
                 children: [
+                  InheritedAplicationState.of(context).currentUser.first_name ==
+                              null &&
+                          InheritedAplicationState.of(context)
+                                  .currentUser
+                                  .last_name ==
+                              null
+                      ? Container()
+                      : SafeArea(
+                          child: Container(
+                              padding: EdgeInsets.only(left: 16.0),
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hello",
+                                    style: TextStyle(
+                                      fontFamily: 'Rubik',
+                                      fontSize: 16.0,
+                                      color: Color(0xFF3C3A36),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  SizedBox(height: 3.0),
+                                  Text(
+                                    "${InheritedAplicationState.of(context).currentUser.first_name} ${InheritedAplicationState.of(context).currentUser.last_name}",
+                                    style: TextStyle(
+                                      fontFamily: 'Rubik',
+                                      fontSize: 32.0,
+                                      color: Color(0xFF3C3A36),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
                   Expanded(
-                    flex: 6,
+                    flex: 5,
                     child: ListView.builder(
                         controller: _controller,
                         itemCount: snapshot.data.length + 1,
