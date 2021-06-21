@@ -5,8 +5,10 @@ import 'package:training_application/models/user.dart';
 class UserTile extends StatelessWidget {
   final User user;
   final int userIndex;
+  final bool isConnected;
 
-  const UserTile({Key key, this.user, this.userIndex}) : super(key: key);
+  const UserTile({Key key, this.user, this.userIndex, this.isConnected})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:training_application/models/user.dart';
@@ -8,6 +9,7 @@ import 'settings_screen.dart';
 import 'profile_screen.dart';
 import 'user_info_screen.dart';
 import 'package:training_application/state/inherited_application_state.dart';
+import 'package:training_application/widget/custom_button.dart';
 
 //color palette
 const kTextColor = Color(0xFF3C3A36);
@@ -18,7 +20,8 @@ class UsersScreen extends StatefulWidget {
   _UsersScreenState createState() => _UsersScreenState();
 }
 
-class _UsersScreenState extends State<UsersScreen> {
+class _UsersScreenState extends State<UsersScreen>
+    with AutomaticKeepAliveClientMixin<UsersScreen> {
   int selectedIndex = 0;
   final ScrollController _controller = ScrollController();
 
@@ -95,6 +98,13 @@ class _UsersScreenState extends State<UsersScreen> {
     return users;
   }
 
+  List<User> usersFromDb = [];
+  String fullName;
+  List<User> searchedUsers = [];
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     _controller.addListener(_onScroll);
@@ -104,131 +114,302 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: FutureBuilder(
-          future: loadData(),
-          builder: (context, snapshot) {
-            print(snapshot.connectionState);
-            print('${isLoadingFirst} - in main');
-
-            if (isLoadingFirst && !snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            } else {
+        backgroundColor: Colors.white,
+        body: FutureBuilder(
+            future: loadData(),
+            builder: (context, snapshot) {
               print(snapshot.connectionState);
-              return Column(
-                children: [
-                  InheritedAplicationState.of(context).currentUser.first_name ==
-                              null &&
-                          InheritedAplicationState.of(context)
-                                  .currentUser
-                                  .last_name ==
-                              null
-                      ? Container()
-                      : SafeArea(
-                          child: Container(
-                              padding: EdgeInsets.only(left: 16.0),
-                              alignment: Alignment.centerLeft,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Hello",
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontSize: 16.0,
-                                      color: Color(0xFF3C3A36),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  SizedBox(height: 3.0),
-                                  Text(
-                                    "${InheritedAplicationState.of(context).currentUser.first_name} ${InheritedAplicationState.of(context).currentUser.last_name}",
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontSize: 32.0,
-                                      color: Color(0xFF3C3A36),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ),
-                  Expanded(
-                    flex: 5,
-                    child: ListView.builder(
-                        controller: _controller,
-                        itemCount: snapshot.data.length + 1,
-                        itemBuilder: (context, index) {
-                          var user = User();
-                          if (index == snapshot.data.length) {
-                            if (page != totalCount) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              );
-                            }
-                            return Container();
-                          } else {
-                            user = snapshot.data[index];
+              print('${isLoadingFirst} - in main');
 
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, right: 16.0, bottom: 16.0),
-                              child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          pageBuilder: (BuildContext context,
-                                              Animation<double> animation,
-                                              Animation<double>
-                                                  secondaryAnimation) {
-                                            return UserInfoScreen(user: user);
-                                          },
-                                          transitionsBuilder:
-                                              (BuildContext context,
+              if (isLoadingFirst && !snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                print(snapshot.connectionState);
+                return Column(
+                  children: [
+                    InheritedAplicationState.of(context)
+                                    .currentUser
+                                    .first_name ==
+                                null &&
+                            InheritedAplicationState.of(context)
+                                    .currentUser
+                                    .last_name ==
+                                null
+                        ? Container()
+                        : SafeArea(
+                            child: Container(
+                                padding: EdgeInsets.only(left: 16.0),
+                                alignment: Alignment.centerLeft,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    searchedUsers.isEmpty
+                                        ? Text(
+                                            "Hello,",
+                                            style: TextStyle(
+                                              fontFamily: 'Rubik',
+                                              fontSize: 16.0,
+                                              color: Color(0xFF3C3A36),
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          )
+                                        : Container(),
+                                    searchedUsers.isEmpty
+                                        ? SizedBox(height: 3.0)
+                                        : Container(),
+                                    searchedUsers.isEmpty
+                                        ? Text(
+                                            "${InheritedAplicationState.of(context).currentUser.first_name} ${InheritedAplicationState.of(context).currentUser.last_name}",
+                                            style: TextStyle(
+                                              fontFamily: 'Rubik',
+                                              fontSize: 32.0,
+                                              color: Color(0xFF3C3A36),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          )
+                                        : Container(),
+                                    SizedBox(height: 12.0),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 16.0, bottom: 16.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              searchedUsers.isNotEmpty
+                                                  ? Expanded(
+                                                      child: CustomButton(
+                                                        icon: Icons
+                                                            .arrow_back_ios_rounded,
+                                                        padding: 15.0,
+                                                        onButtonTap: () {
+                                                          setState(() {
+                                                            searchedUsers = [];
+                                                          });
+                                                          ;
+                                                        },
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                              Expanded(
+                                                flex: 6,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 4.0),
+                                                  child: TextFormField(
+                                                    controller:
+                                                        TextEditingController(
+                                                            text: fullName),
+                                                    onChanged: (value) {
+                                                      fullName = value;
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                          'Search by User Name',
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12.0),
+                                                        borderSide: BorderSide(
+                                                          color:
+                                                              kBorderFormColor,
+                                                          width: 1.0,
+                                                        ),
+                                                      ),
+                                                      suffixIcon: IconButton(
+                                                        icon: SvgPicture.asset(
+                                                            'images/search.svg',
+                                                            color: Color(
+                                                                0xFF3C3A36)),
+                                                        onPressed: () async {
+                                                          List<User> result =
+                                                              await InheritedAplicationState
+                                                                      .of(
+                                                                          context)
+                                                                  .getSearchResult(
+                                                                      fullName);
+
+                                                          setState(() {
+                                                            searchedUsers =
+                                                                result;
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          searchedUsers.isNotEmpty
+                                              ? SizedBox(height: 12.0)
+                                              : Container(),
+                                          searchedUsers.isNotEmpty
+                                              ? Text(
+                                                  '${searchedUsers.length} Results',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Rubik',
+                                                    fontSize: 24.0,
+                                                    color: Color(0xFF3C3A36),
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                )
+                                              : Container()
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                    Expanded(
+                      flex: 5,
+                      child: searchedUsers.isEmpty
+                          ? ListView.builder(
+                              controller: _controller,
+                              itemCount: snapshot.data.length + 1,
+                              itemBuilder: (context, index) {
+                                var user = User();
+                                if (index == snapshot.data.length) {
+                                  if (page != totalCount) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    );
+                                  }
+                                  return Container();
+                                } else {
+                                  user = snapshot.data[index];
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0, right: 16.0, bottom: 16.0),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              PageRouteBuilder(
+                                                pageBuilder: (BuildContext
+                                                        context,
+                                                    Animation<double> animation,
+                                                    Animation<double>
+                                                        secondaryAnimation) {
+                                                  return UserInfoScreen(
+                                                      user: user);
+                                                },
+                                                transitionsBuilder:
+                                                    (BuildContext context,
+                                                        Animation<double>
+                                                            animation,
+                                                        Animation<double>
+                                                            secondaryAnimation,
+                                                        Widget child) {
+                                                  return SlideTransition(
+                                                    position: new Tween<Offset>(
+                                                      begin: const Offset(
+                                                          0.0, 1.0),
+                                                      end: Offset.zero,
+                                                    ).animate(animation),
+                                                    child: new SlideTransition(
+                                                      position: new Tween<
+                                                          Offset>(
+                                                        begin: Offset.zero,
+                                                        end: const Offset(
+                                                            0.0, 1.0),
+                                                      ).animate(
+                                                          secondaryAnimation),
+                                                      child: FadeTransition(
+                                                        opacity: animation,
+                                                        child: child,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ));
+                                        },
+                                        child: Container(
+                                          child: UserTile(user: user),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1.0,
+                                                color: Color(0xFFBEBAB3)),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(12.0),
+                                            ),
+                                          ),
+                                        )),
+                                  );
+                                }
+                              })
+                          : ListView.builder(
+                              itemCount: searchedUsers.length,
+                              itemBuilder: (BuildContext context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16.0, right: 16.0, bottom: 16.0),
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              pageBuilder: (BuildContext
+                                                      context,
+                                                  Animation<double> animation,
+                                                  Animation<double>
+                                                      secondaryAnimation) {
+                                                return UserInfoScreen(
+                                                    user: searchedUsers[index]);
+                                              },
+                                              transitionsBuilder: (BuildContext
+                                                      context,
                                                   Animation<double> animation,
                                                   Animation<double>
                                                       secondaryAnimation,
                                                   Widget child) {
-                                            return SlideTransition(
-                                              position: new Tween<Offset>(
-                                                begin: const Offset(0.0, 1.0),
-                                                end: Offset.zero,
-                                              ).animate(animation),
-                                              child: new SlideTransition(
-                                                position: new Tween<Offset>(
-                                                  begin: Offset.zero,
-                                                  end: const Offset(0.0, 1.0),
-                                                ).animate(secondaryAnimation),
-                                                child: FadeTransition(
-                                                  opacity: animation,
-                                                  child: child,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ));
-                                  },
-                                  child: Container(
-                                    child: UserTile(user: user),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.0, color: Color(0xFFBEBAB3)),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(12.0),
-                                      ),
-                                    ),
-                                  )),
-                            );
-                          }
-                        }),
-                  ),
-                ],
-              );
-            }
-          }),
-    );
+                                                return SlideTransition(
+                                                  position: new Tween<Offset>(
+                                                    begin:
+                                                        const Offset(0.0, 1.0),
+                                                    end: Offset.zero,
+                                                  ).animate(animation),
+                                                  child: new SlideTransition(
+                                                    position: new Tween<Offset>(
+                                                      begin: Offset.zero,
+                                                      end: const Offset(
+                                                          0.0, 1.0),
+                                                    ).animate(
+                                                        secondaryAnimation),
+                                                    child: FadeTransition(
+                                                      opacity: animation,
+                                                      child: child,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ));
+                                      },
+                                      child: Container(
+                                        child: UserTile(
+                                            user: searchedUsers[index]),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.0,
+                                              color: Color(0xFFBEBAB3)),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(12.0),
+                                          ),
+                                        ),
+                                      )),
+                                );
+                              }),
+                    ),
+                  ],
+                );
+              }
+            }));
   }
 }

@@ -77,13 +77,19 @@ class DB {
       return null;
   }
 
-  Future<List<Map<String, dynamic>>> getUsers() async {
+  Future<List<User>> searchFor(String name, String lastName) async {
     List<Map<String, dynamic>> users = await _database.rawQuery(
-      'SELECT * FROM User',
+      "SELECT * FROM User WHERE first_name LIKE '%${name}%' OR last_name LIKE '%${lastName}%'",
     );
-    if (users.isNotEmpty)
-      return users;
-    else
+    if (users.isNotEmpty) {
+      List<User> usersConverted = [];
+
+      users.forEach((element) {
+        print(element);
+        usersConverted.add(User.fromMap(element));
+      });
+      return usersConverted;
+    } else
       return null;
   }
 }

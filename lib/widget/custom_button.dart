@@ -7,12 +7,14 @@ class CustomButton extends StatelessWidget {
     this.iconSize = 15.0,
     this.onButtonTap,
     @required this.icon,
+    this.padding,
   }) : super(key: key);
 
   final double buttonSize;
   final double iconSize;
   final VoidCallback onButtonTap;
   final IconData icon;
+  final double padding;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,9 @@ class CustomButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(100.0),
           onTap: onButtonTap,
           child: Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: padding == null
+                ? const EdgeInsets.all(4.0)
+                : const EdgeInsets.all(15.0),
             child: Icon(
               icon,
               size: iconSize,

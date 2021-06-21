@@ -45,14 +45,14 @@ class User {
     };
   }
 
-  User fromMap(Map<String, dynamic> map) {
+  static User fromMap(Map<String, dynamic> map) {
     Map<String, dynamic> colorMap = {
       'user_color_id': map['user_color_id'],
       'user_color_name': map['user_color_name'],
       'user_color_year': map['user_color_year'],
       'user_color_color': map['user_color_color'],
     };
-    UserColor returnedUserColor = userColor.fromMap(colorMap);
+    UserColor returnedUserColor = UserColor.fromMapUserColor(colorMap);
     return User(
         id: map['id'],
         email: map['email'],

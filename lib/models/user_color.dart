@@ -17,7 +17,7 @@ class UserColor {
     };
   }
 
-  UserColor fromMap(Map<String, dynamic> map) {
+  static UserColor fromMapUserColor(Map<String, dynamic> map) {
     return UserColor(
         id: map['user_color_id'],
         name: map['user_color_name'],
@@ -25,7 +25,7 @@ class UserColor {
         color: Color(hexStringToHexInt('${map['user_color_color']}')));
   }
 
-  hexStringToHexInt(String hex) {
+  static hexStringToHexInt(String hex) {
     hex = hex.replaceFirst('#', '');
     hex = hex.length == 6 ? 'ff' + hex : hex;
     int val = int.parse(hex, radix: 16);
