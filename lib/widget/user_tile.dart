@@ -76,7 +76,7 @@ class UserTile extends StatelessWidget {
               bottom: 65.0,
               child: CircleAvatar(
                 backgroundColor: Color(0xFFF8F2EE),
-                backgroundImage: user.avatar != null
+                backgroundImage: user.avatar != null && isConnected == true
                     ? NetworkImage(user.avatar)
                     : AssetImage('images/profile_example.png'),
                 radius: 37.5,

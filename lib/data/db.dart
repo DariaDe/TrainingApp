@@ -42,6 +42,7 @@ class DB {
     );
     print("Exist ? ${Sqflite.firstIntValue(existResult)}");
     if (Sqflite.firstIntValue(existResult) != 0) {
+      getAllUsers();
       var result = await updateCurrentUser(user);
       print("Result ${result}");
       if (result != 0)
@@ -77,6 +78,21 @@ class DB {
       return null;
   }
 
+  Future<List<User>> getAllUsers() async {
+    print('I am in db');
+    var users = await _database.rawQuery("SELECT * FROM User");
+
+    if (users.isNotEmpty) {
+      List<User> usersConverted = [];
+
+      for (var i = 1; i < users.length; i++) {
+        usersConverted.add(User.fromMap(users[i]));
+      }
+      return usersConverted;
+    } else
+      return null;
+  }
+
   Future<List<User>> searchFor(String name, String lastName) async {
     List<Map<String, dynamic>> users = await _database.rawQuery(
       "SELECT * FROM User WHERE first_name LIKE '%${name}%' OR last_name LIKE '%${lastName}%'",
@@ -88,6 +104,7 @@ class DB {
         print(element);
         usersConverted.add(User.fromMap(element));
       });
+
       return usersConverted;
     } else
       return null;

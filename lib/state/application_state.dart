@@ -17,7 +17,6 @@ class ApplicationState {
   DB db = DB();
 
   User currentUser = User();
-  List<User> usersList = [];
 
   void goToPage(int pageIndex) {
     controller.animateToPage(pageIndex,
@@ -102,6 +101,18 @@ class ApplicationState {
     List<String> name = fullName.split(' ');
     var res = await db.searchFor(name[0], name[1]);
     return res;
+  }
+
+  Future<List<User>> getAllUsers() async {
+    var database = await db.database;
+    List<User> allUsers = await db.getAllUsers();
+    var existingCurrentUser = await db.getCurrentUser();
+    print('Existing user ${existingCurrentUser}');
+    if (existingCurrentUser != null) {
+      currentUser.first_name = existingCurrentUser[0]['first_name'];
+      currentUser.last_name = existingCurrentUser[0]['last_name'];
+    }
+    return allUsers;
   }
 
   Future getPagesCount() async {

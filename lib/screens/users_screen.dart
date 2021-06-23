@@ -10,6 +10,7 @@ import 'profile_screen.dart';
 import 'user_info_screen.dart';
 import 'package:training_application/state/inherited_application_state.dart';
 import 'package:training_application/widget/custom_button.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 //color palette
 const kTextColor = Color(0xFF3C3A36);
@@ -29,6 +30,7 @@ class _UsersScreenState extends State<UsersScreen>
   int page = 1;
 
   List<User> users = [];
+  List<User> usersFromDb = [];
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -52,10 +54,12 @@ class _UsersScreenState extends State<UsersScreen>
   }
 
   _onScroll() {
+    _checkInternetConnection();
     if (_controller.position.maxScrollExtent == _controller.position.pixels) {
       if (!_atTheBottom) {
         setState(() {
           _atTheBottom = !_atTheBottom;
+
           loadData();
         });
       }
@@ -66,39 +70,65 @@ class _UsersScreenState extends State<UsersScreen>
   bool isLoadingFirst = false;
   int totalCount = 1;
 
+  bool _isConnected = false;
+
+  Future<void> _checkInternetConnection() async {
+    try {
+      final response = await InternetAddress.lookup('www.kindacode.com');
+      if (response.isNotEmpty) {
+        setState(() {
+          _isConnected = true;
+        });
+      }
+    } on SocketException catch (err) {
+      setState(() {
+        _isConnected = false;
+      });
+      print(err);
+    }
+
+    print('${_isConnected} - is Connected');
+  }
+
   loadData() async {
     print('Meee');
     print(page);
-    if (page == 1) {
-      isLoadingFirst = true;
-      print(isLoadingFirst);
-      users = await InheritedAplicationState.of(context).getUsers(page);
-      totalCount = await InheritedAplicationState.of(context).getPagesCount();
 
-      isLoadingFirst = false;
-      print(isLoadingFirst);
-    }
-
-    print('total pages - ${totalCount}');
-    if (_atTheBottom) {
-      if (page < totalCount) {
-        page++;
-        print('${page} - page for second time');
+    if (_isConnected) {
+      if (page == 1) {
+        isLoadingFirst = true;
         print(isLoadingFirst);
-        isLoading = true;
-        List<User> newUsers =
-            await InheritedAplicationState.of(context).getUsers(page);
-        setState(() {
-          users.addAll(newUsers);
-          isLoading = false;
-        });
-      }
-    }
+        users = await InheritedAplicationState.of(context).getUsers(page);
+        totalCount = await InheritedAplicationState.of(context).getPagesCount();
 
-    return users;
+        isLoadingFirst = false;
+        print(isLoadingFirst);
+      }
+
+      print('total pages - ${totalCount}');
+      if (_atTheBottom) {
+        if (page < totalCount) {
+          page++;
+          print('${page} - page for second time');
+          print(isLoadingFirst);
+          isLoading = true;
+          List<User> newUsers =
+              await InheritedAplicationState.of(context).getUsers(page);
+          setState(() {
+            users.addAll(newUsers);
+            isLoading = false;
+          });
+        }
+      }
+      return users;
+    } else {
+      isLoadingFirst = true;
+      usersFromDb = await InheritedAplicationState.of(context).getAllUsers();
+      isLoadingFirst = false;
+      return usersFromDb;
+    }
   }
 
-  List<User> usersFromDb = [];
   String fullName;
   List<User> searchedUsers = [];
 
@@ -108,7 +138,9 @@ class _UsersScreenState extends State<UsersScreen>
   @override
   void initState() {
     _controller.addListener(_onScroll);
+
     super.initState();
+    _checkInternetConnection();
   }
 
   @override
@@ -188,7 +220,6 @@ class _UsersScreenState extends State<UsersScreen>
                                                           setState(() {
                                                             searchedUsers = [];
                                                           });
-                                                          ;
                                                         },
                                                       ),
                                                     )
@@ -332,7 +363,9 @@ class _UsersScreenState extends State<UsersScreen>
                                               ));
                                         },
                                         child: Container(
-                                          child: UserTile(user: user),
+                                          child: UserTile(
+                                              user: user,
+                                              isConnected: _isConnected),
                                           decoration: BoxDecoration(
                                             border: Border.all(
                                                 width: 1.0,
@@ -394,7 +427,8 @@ class _UsersScreenState extends State<UsersScreen>
                                       },
                                       child: Container(
                                         child: UserTile(
-                                            user: searchedUsers[index]),
+                                            user: searchedUsers[index],
+                                            isConnected: _isConnected),
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                               width: 1.0,

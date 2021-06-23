@@ -34,6 +34,7 @@ dependencies:
   string_to_hex: ^0.2.1+30
   sqflite: ^2.0.0+3
   path: ^1.8.0
+  connectivity_plus: ^1.0.4
 
 dev_dependencies:
   flutter_test:
