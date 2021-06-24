@@ -75,19 +75,20 @@ class _UsersScreenState extends State<UsersScreen>
   Future<void> _checkInternetConnection() async {
     try {
       final response = await InternetAddress.lookup('www.kindacode.com');
-      if (response.isNotEmpty) {
+      if (response.isNotEmpty && _isConnected == false) {
         setState(() {
           _isConnected = true;
         });
       }
     } on SocketException catch (err) {
-      setState(() {
-        _isConnected = false;
-      });
-      print(err);
-    }
+      if (_isConnected == true) {
+        setState(() {
+          _isConnected = false;
+        });
 
-    print('${_isConnected} - is Connected');
+        print(err);
+      }
+    }
   }
 
   loadData() async {
